@@ -1,0 +1,49 @@
+name: 'Terraform Deploy'
+
+# 1. Когда запускать пайплайн? (При любом пуше в ветку main)
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    # 2. На какой ОС запускать виртуалку?
+    runs-on: ubuntu-latest
+
+    # 3. Достаем ключи из сейфа GitHub и кладем в виртуалку как переменные среды (ENV)
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.YC_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.YC_SECRET_KEY }}
+      TF_VAR_cloud_id: ${{ secrets.YC_CLOUD_ID }}
+      TF_VAR_folder_id: ${{ secrets.YC_FOLDER_ID }}
+
+    steps:
+      # Шаг 1: Клонируем ваш код из GitHub на виртуалку
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Шаг 2: Устанавливаем сам Терраформ (качаем бинарник)
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.8.5
+
+      # Шаг 3: Выполняем terraform init
+      - name: Terraform Init
+        run: terraform init
+
+      # Шаг 4: Выполняем проверку кода
+      - name: Terraform Format
+        run: terraform fmt -check
+
+      # Шаг 5: Показываем план изменений (удобно смотреть в логах GitHub)
+      - name: Terraform Plan
+        run: terraform plan -no-color
+        
+      # Шаг 6: ПРИМЕНЯЕМ! (Только если пуш был в ветку main)
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve

@@ -1,0 +1,12 @@
+# Секреты Яндекса
+*.json
+key.json
+
+# Переменные (там могут быть чувствительные ID)
+*.tfvars
+
+# Временные файлы Terraform
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
