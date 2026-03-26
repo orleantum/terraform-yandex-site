@@ -1,0 +1,38 @@
+name: 'Terraform Destroy (Manual)'
+
+# Запускаем только вручную по кнопке (workflow_dispatch)
+on:
+  workflow_dispatch:
+
+jobs:
+  terraform-destroy:
+    name: 'Terraform Destroy'
+    runs-on: ubuntu-latest
+    
+    # Те же самые ключи из секретов!
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.YC_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.YC_SECRET_KEY }}
+      TF_VAR_cloud_id: ${{ secrets.YC_CLOUD_ID }}
+      TF_VAR_folder_id: ${{ secrets.YC_FOLDER_ID }}
+      TF_VAR_site_bucket_name: "orleantum-tf-intro-site-bucket"
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Восстанавливаем файл key.json из секрета
+      - name: Create SA key
+        run: echo '${{ secrets.YC_KEY_JSON }}' > key.json
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.8.5
+
+      - name: Terraform Init
+        run: terraform init
+
+      # Выполняем автоматическое уничтожение без запроса 'yes'
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve
