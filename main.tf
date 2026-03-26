@@ -36,6 +36,8 @@ resource "time_sleep" "wait_for_iam" {
 
 // Use keys to create bucket
 resource "yandex_storage_bucket" "orleantum-bucket" {
+  # checkov:skip=CKV_YC_3: Шифрование KMS не требуется для бакета с публичным статическим сайтом.
+
   access_key = yandex_iam_service_account_static_access_key.sa-static-key.access_key
   secret_key = yandex_iam_service_account_static_access_key.sa-static-key.secret_key
   bucket     = var.site_bucket_name

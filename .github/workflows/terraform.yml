@@ -46,7 +46,7 @@ jobs:
         with:
           directory: .
           framework: terraform
-          soft_fail: true # Пока ставим true, чтобы не ломать деплой
+          soft_fail: false # Пока ставим true, чтобы не ломать деплой
 
       # Шаг 4: Выполняем проверку кода
       - name: Terraform Format
