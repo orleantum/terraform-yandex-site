@@ -1,8 +1,7 @@
 name: 'Terraform Destroy (Manual)'
 
 # Запускаем только вручную по кнопке (workflow_dispatch)
-on:
-  workflow_dispatch:
+on: [workflow_dispatch]
 
 jobs:
   terraform-destroy:
