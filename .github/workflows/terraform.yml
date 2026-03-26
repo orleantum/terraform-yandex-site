@@ -20,10 +20,16 @@ jobs:
       TF_VAR_cloud_id: ${{ secrets.YC_CLOUD_ID }}
       TF_VAR_folder_id: ${{ secrets.YC_FOLDER_ID }}
 
+      TF_VAR_site_bucket_name: "orleantum-tf-intro-site-bucket"
+
     steps:
       # Шаг 1: Клонируем ваш код из GitHub на виртуалку
       - name: Checkout Code
         uses: actions/checkout@v4
+
+        # НОВЫЙ ШАГ: Создаем файл key.json из секрета GitHub
+      - name: Create SA key
+        run: echo '${{ secrets.YC_KEY_JSON }}' > key.json
 
       # Шаг 2: Устанавливаем сам Терраформ (качаем бинарник)
       - name: Setup Terraform
