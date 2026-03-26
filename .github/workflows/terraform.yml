@@ -41,6 +41,13 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
+      - name: Checkov Security Scan
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: .
+          framework: terraform
+          soft_fail: true # Пока ставим true, чтобы не ломать деплой
+
       # Шаг 4: Выполняем проверку кода
       - name: Terraform Format
         run: terraform fmt -check
